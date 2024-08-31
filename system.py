@@ -2,8 +2,8 @@ import json
 import os
 from datetime import datetime
 
-FILE_PATH = 'rooms.json'
-HISTORY_PATH = 'history.json'
+FILE_PATH = 'rooms_example.json'
+HISTORY_PATH = 'history_example.json'
 
 if not os.path.exists(FILE_PATH):
     with open(FILE_PATH, 'w') as file:
@@ -181,3 +181,76 @@ def checkout_room():
             return
     print("Zimmer nicht verfügbar oder nicht gebucht!")
 
+def view_history():
+    history = load_history()
+    if not history:
+        print("Kein Verlauf vorhanden.")
+        return
+
+    print("\nVerlauf durchsuchen")
+    print("1. Nach Zimmernummer suchen")
+    print("2. Nach Gastname suchen")
+    choice = input("Wähle eine Option: ")
+
+    if choice == '1':
+        room_number = input("Gib die Zimmernummer ein: ")
+        filtered_history = [record for record in history if record['room_number'] == room_number]
+    elif choice == '2':
+        guest_name = input("Gib den Gastnamen ein: ")
+        filtered_history = [record for record in history if record['guest_name'].lower() == guest_name.lower()]
+    else:
+        print("Ungültige Auswahl!")
+        return
+
+    if not filtered_history:
+        print("Keine Einträge gefunden.")
+        return
+
+    for record in filtered_history:
+        print(f"\nZimmer Nummer: {record['room_number']}")
+        print(f"  Gast Name: {record['guest_name']}")
+        print(f"  Check-in: {record['check_in']}")
+        print(f"  Check-out: {record['check_out'] if record['check_out'] else 'Noch nicht ausgecheckt'}")
+
+
+# Hauptmenü
+def main_menu():
+    while True:
+        print("\nHotel Buchungssystem")
+        print("1. Zimmer Liste")
+        print("2. Zimmer hinzufügen")
+        print("3. Zimmer reservieren")
+        print("4. Zimmer einchecken")
+        print("5. Optionen auf Zimmer schreiben")
+        print("6. Gast Optionen (z.B. Frühstück, Wellnessbereich)")
+        print("7. Zimmer auschecken")
+        print("8. Zimmer Informationen anzeigen")
+        print("9. Verlauf anzeigen")
+        print("10. Beenden")
+
+        choice = input("Wähle eine Option: ")
+
+        if choice == '1':
+            list_rooms()
+        elif choice == '2':
+            add_room()
+        elif choice == '3':
+            reserve_room()
+        elif choice == '4':
+            book_room()
+        elif choice == '5' or choice == '6':
+            add_guest_options()
+        elif choice == '7':
+            checkout_room()
+        elif choice == '8':
+            room_info()
+        elif choice == '9':
+            view_history()
+        elif choice == '10':
+            break
+        else:
+            print("Ungültige Option, bitte erneut versuchen!")
+
+
+if __name__ == "__main__":
+    main_menu()
